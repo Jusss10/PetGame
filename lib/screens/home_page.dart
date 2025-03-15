@@ -14,7 +14,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void feedPet() {
     setState(() {
-      petStatus = "Your pet is eating!";
+      petStatus = "mmmhhh delicious";
+    });
+  }
+  void bathPet() {
+    setState(() {
+      petStatus = "Now im clean!!";
+    });
+  }
+  void cuddlePet() {
+    setState(() {
+      petStatus = "I feel loved, thank u";
     });
   }
 
@@ -31,6 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(petStatus, style: const TextStyle(fontSize: 20)),
             const SizedBox(height: 20),
             CustomButton(icon: Icons.fastfood, onPressed: feedPet),
+            CustomButton(icon: Icons.bathtub, onPressed: bathPet),
+            CustomButton(icon: Icons.pets, onPressed: cuddlePet),
           ],
         ),
       ),
