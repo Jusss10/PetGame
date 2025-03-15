@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset('assets/pet1.png'),
+            Image.asset('assets/rightPet.png'),
             Text(petStatus, style: const TextStyle(fontSize: 20)),
             const SizedBox(height: 20),
             CustomButton(icon: Icons.fastfood, onPressed: feedPet),
