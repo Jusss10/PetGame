@@ -11,7 +11,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String petStatus = "null";
+  String petStatus = " ";
 
   void feedPet() {
     setState(() {
@@ -35,23 +35,24 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Stack(
-        children: [
-          const MovingPet(),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset('assets/rightPet.png'),
-                Text(petStatus, style: const TextStyle(fontSize: 20)),
-                const SizedBox(height: 20),
-                CustomButton(icon: Icons.fastfood, onPressed: feedPet),
-                CustomButton(icon: Icons.bathtub, onPressed: bathPet),
-                CustomButton(icon: Icons.pets, onPressed: cuddlePet),
-              ],
-            ),
-          )
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const SizedBox(height: 50),
+            const MovingPet(),
+            Text(petStatus, style: const TextStyle(fontSize: 20)),
+            const SizedBox(height: 20),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomButton(icon: Icons.fastfood, onPressed: feedPet),
+                  CustomButton(icon: Icons.bathtub, onPressed: bathPet),
+                  CustomButton(icon: Icons.pets, onPressed: cuddlePet),
+                ],
+            )
+          ],
+        ),
       ),
     );
   }
