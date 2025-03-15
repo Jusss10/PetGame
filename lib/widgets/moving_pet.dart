@@ -29,15 +29,19 @@ class _MovingPetState extends State<MovingPet>{
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        AnimatedPositioned(
-          duration: const Duration(seconds: 1),
-          left: _position,
-          bottom: 50,
-          child: Image.asset('assets/rightPet.png', width: 100),
-        ),
-      ],
+    return SizedBox(
+      width: double.infinity,
+      height: 150,
+      child: Stack(
+        children: [
+          AnimatedPositioned(
+            duration: const Duration(seconds: 1),
+            left: _position,
+            bottom: 50,
+            child: Image.asset('assets/rightPet.png', width: 100),
+          ),
+        ],
+      ),
     );
   }
 }
