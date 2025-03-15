@@ -1,17 +1,23 @@
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HungerModel {
-  final SharedPreferencesAsync prefs = SharedPreferencesAsync();
   int hungerLevel = 100; // Default hunger level
+  late SharedPreferences prefs; // Initialize later
 
-  // Initialize SharedPreferencesAsync
+  final StreamController<int> _hungerController = StreamController<int>();
+  Stream<int> get hungerStream => _hungerController.stream;
+
+  // Initialize SharedPreferences
   Future<void> init() async {
+    prefs = await SharedPreferences.getInstance();
     await loadHungerLevel();
   }
 
-  // Load hunger level from storage
+  // Load hunger level from storage and notify listeners
   Future<void> loadHungerLevel() async {
-    hungerLevel = await prefs.getInt('hungerLevel') ?? 100;
+    hungerLevel = prefs.getInt('hungerLevel') ?? 100;
+    _hungerController.sink.add(hungerLevel); // Notify listeners
   }
 
   // Save hunger level to storage
@@ -19,22 +25,27 @@ class HungerModel {
     await prefs.setInt('hungerLevel', hungerLevel);
   }
 
-  // Update hunger level and save
+  // Update hunger level, save, and notify listeners
   Future<void> updateHungerLevel(int newLevel) async {
     hungerLevel = newLevel;
     await saveHungerLevel();
+    _hungerController.sink.add(hungerLevel);
   }
 
-  // Decrease hunger periodically
+  // Decrease hunger periodically and notify listeners
   void decreaseHungerPeriodically() {
     Future.delayed(const Duration(seconds: 10), () async {
       if (hungerLevel > 0) {
         hungerLevel--;
         await saveHungerLevel();
+        _hungerController.sink.add(hungerLevel);
       }
-      decreaseHungerPeriodically(); // Keep it running
+      decreaseHungerPeriodically(); // Keep running
     });
   }
+
+  // Dispose of the stream
+  void dispose() {
+    _hungerController.close();
+  }
 }
-//Future<void> : represents an asynchronous operation
-//prefs stores key(hungerLevel) and value(int)
