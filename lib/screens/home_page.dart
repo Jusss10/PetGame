@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pet_game/widgets/custom_button.dart';
-import 'package:pet_game/widgets/moving_pet.dart';
+import 'package:pet_game/widgets/custom_container.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -35,25 +35,32 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const SizedBox(height: 50),
-            const MovingPet(),
-            Text(petStatus, style: const TextStyle(fontSize: 20)),
-            const SizedBox(height: 20),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomButton(icon: Icons.fastfood, onPressed: feedPet),
-                  CustomButton(icon: Icons.bathtub, onPressed: bathPet),
-                  CustomButton(icon: Icons.pets, onPressed: cuddlePet),
-                ],
-            )
-          ],
-        ),
-      ),
+      body: Stack(
+        children: [
+          Positioned(
+            top: 20, // Distance from the top
+            child: CustomContainer(icon: Icons.fastfood),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(height: 200),
+                Text(petStatus, style: const TextStyle(fontSize: 20)),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CustomButton(icon: Icons.fastfood, onPressed: feedPet),
+                    CustomButton(icon: Icons.bathtub, onPressed: bathPet),
+                    CustomButton(icon: Icons.pets, onPressed: cuddlePet),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ],
+      )
     );
   }
 }

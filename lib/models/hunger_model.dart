@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HungerModel {
-  int hungerLevel = 100; // Default hunger level
+  int hungerLevel = 10; // Default hunger level
   late SharedPreferences prefs; // Initialize later
 
   final StreamController<int> _hungerController = StreamController<int>();
@@ -16,7 +16,7 @@ class HungerModel {
 
   // Load hunger level from storage and notify listeners
   Future<void> loadHungerLevel() async {
-    hungerLevel = prefs.getInt('hungerLevel') ?? 100;
+    hungerLevel = prefs.getInt('hungerLevel') ?? 10;
     _hungerController.sink.add(hungerLevel); // Notify listeners
   }
 
