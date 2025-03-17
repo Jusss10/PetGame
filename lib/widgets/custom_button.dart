@@ -20,7 +20,7 @@ class CustomButton extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white),
+          Icon(icon, color: Colors.white, size: 30),
         ],
       ),
     );
