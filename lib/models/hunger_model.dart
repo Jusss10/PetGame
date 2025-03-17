@@ -14,7 +14,7 @@ class HungerModel {
     await loadHungerLevel();
   }
 
-  // Load hunger level from storage and notify listeners
+  // load hunger level from storage and notify listeners
   Future<void> loadHungerLevel() async {
     hungerLevel = prefs.getInt('hungerLevel') ?? 10;
     _hungerController.sink.add(hungerLevel); // Notify listeners
@@ -42,12 +42,6 @@ class HungerModel {
       }
       decreaseHungerPeriodically(); // Keep running
     });
-  }
-
-  Future<void> resetHunger() async {
-    hungerLevel = 0; // Reset to full
-    await saveHungerLevel();
-    _hungerController.sink.add(hungerLevel);
   }
 
   // Dispose of the stream

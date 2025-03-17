@@ -41,13 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void reset() {
-    setState(() {
-      petStatus = "reset";
-    });
-    hungerModel.resetHunger();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     CustomButton(icon: Icons.fastfood, onPressed: feedPet),
                     CustomButton(icon: Icons.bathtub, onPressed: bathPet),
                     CustomButton(icon: Icons.pets, onPressed: cuddlePet),
-                    CustomButton(icon: Icons.reset_tv_outlined, onPressed: reset),
                   ],
                 ),
               ],
