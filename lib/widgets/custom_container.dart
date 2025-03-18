@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:pet_game/models/need_model.dart';
 //import 'package:pet_game/models/hunger_model.dart';
 
 class CustomContainer extends StatelessWidget {
   final IconData icon;
-  final NeedModel needModel;
+  final Stream<int> needStream; //make a globalStream
 
-  const CustomContainer({super.key, required this.icon, required this.needModel});
+  const CustomContainer({super.key, required this.icon, required this.needStream});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<int>(
-      stream: needModel.hungerStream,
+      stream: needStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         }
 
-        int hungerLevel = snapshot.data ?? 10;
+        int needLevel = snapshot.data ?? 10;
 
         return Container(
           padding: const EdgeInsets.all(8),
@@ -31,7 +30,7 @@ class CustomContainer extends StatelessWidget {
                 height: 10,
                 color: Colors.grey,
                 child: Row(
-                  children: List.generate( hungerLevel, (index) =>
+                  children: List.generate(needLevel, (index) =>
                   Container(
                       width: 10,
                       height: 10,

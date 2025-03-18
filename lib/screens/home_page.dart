@@ -15,7 +15,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String petStatus = " ";
-  final NeedModel needModel = NeedModel();// initialize need models
+  final NeedModel needModel = NeedModel(); // initialize need models
 
   @override
   void initState() {
@@ -31,7 +31,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       petStatus = "mmmhhh delicious";
     });
-    needModel.updateHungerLevel(needModel.hungerLevel + 2); // increase hunger level
+    needModel.updateHungerLevel(
+        needModel.hungerLevel + 2); // increase hunger level
   }
 
   void bathPet() {
@@ -54,16 +55,24 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Stack(
+      body: Column( //now it vertically
         children: [
-          Positioned(
-            top: 20,
-            left: 20,
-            child: CustomContainer(
-              icon: Icons.fastfood,
-              needModel: needModel,
-            ),
+          CustomContainer(
+            icon: Icons.fastfood,
+            needStream: needModel.hungerStream,
           ),
+          const SizedBox(height: 5),
+          CustomContainer(
+            icon: Icons.bathtub,
+            needStream: needModel.dirtyStream,
+          ),
+          const SizedBox(height: 5),
+          CustomContainer(
+            icon: Icons.pets,
+            needStream: needModel.attentionStream,
+          ),
+          const SizedBox(height: 100),
+
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
