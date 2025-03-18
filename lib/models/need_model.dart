@@ -72,7 +72,7 @@ class NeedModel {
 
   /// Decrease periodically and notify listeners ///
   void decreaseHungerPeriodically() {
-    Future.delayed(const Duration(seconds: 5), () async {
+    Future.delayed(const Duration(seconds: 104), () async {
       if (hungerLevel > 0) {
         hungerLevel--;
         await saveHungerLevel();
@@ -82,7 +82,7 @@ class NeedModel {
     });
   }
   void decreaseDirtyPeriodically() {
-    Future.delayed(const Duration(seconds: 5), () async {
+    Future.delayed(const Duration(seconds: 98), () async {
       if (dirtyLevel > 0) {
         dirtyLevel--;
         await saveDirtyLevel();
@@ -92,7 +92,7 @@ class NeedModel {
     });
   }
   void decreaseAttentionPeriodically() {
-    Future.delayed(const Duration(seconds: 5), () async {
+    Future.delayed(const Duration(seconds: 67), () async {
       if (attentionLevel > 0) {
         attentionLevel--;
         await saveAttentionLevel();

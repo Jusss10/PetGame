@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'screens/home_page.dart';
+import 'package:pet_game/widgets/navigation_bar.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Pet game'),
+      home: MainNavigationBar(),
     );
   }
 }

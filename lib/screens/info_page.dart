@@ -1,1 +1,12 @@
-//this page will have the name and the age of the pet
+import 'package:flutter/material.dart';
+
+class InformationScreen extends StatelessWidget {
+  const InformationScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Profile Screen', style: TextStyle(fontSize: 24)),
+    );
+  }
+}
