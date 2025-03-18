@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pet_game/widgets/custom_button.dart';
 import 'package:pet_game/widgets/custom_container.dart';
-import 'package:pet_game/models/hunger_model.dart'; // Import HungerModel
+import '../models/need_model.dart';
+//import 'package:pet_game/models/hunger_model.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -13,32 +15,37 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String petStatus = " ";
-  final HungerModel hungerModel = HungerModel(); // Instantiate HungerModel
+  final NeedModel needModel = NeedModel();// initialize need models
 
   @override
   void initState() {
     super.initState();
-    hungerModel.init(); // Initialize the hunger model
-    hungerModel.decreaseHungerPeriodically(); // Optionally, start the periodic hunger decrease
+    needModel.initNeeds(); // initialize need models
+    ///starting all decreases for needs ///
+    needModel.decreaseHungerPeriodically();
+    needModel.decreaseDirtyPeriodically();
+    needModel.decreaseAttentionPeriodically();
   }
 
   void feedPet() {
     setState(() {
       petStatus = "mmmhhh delicious";
     });
-    hungerModel.updateHungerLevel(hungerModel.hungerLevel + 2); // Increase hunger level
+    needModel.updateHungerLevel(needModel.hungerLevel + 2); // increase hunger level
   }
 
   void bathPet() {
     setState(() {
       petStatus = "Now im clean!!";
     });
+    needModel.updateDirtyLevel(needModel.dirtyLevel + 2);
   }
 
   void cuddlePet() {
     setState(() {
       petStatus = "I feel loved, thank u";
     });
+    needModel.updateAttentionLevel(needModel.attentionLevel + 2);
   }
 
   @override
@@ -54,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
             left: 20,
             child: CustomContainer(
               icon: Icons.fastfood,
-              hungerModel: hungerModel,
+              needModel: needModel,
             ),
           ),
           Center(
