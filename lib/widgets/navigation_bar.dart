@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../screens/home_page.dart';
-import '../screens/info_page.dart';
-import '../screens/settings_page.dart';
+import '../screens/pet_screen.dart';
+import '../screens/info_screen.dart';
+import '../screens/settings_screen.dart';
 
 class MainNavigationBar extends StatefulWidget{
   const MainNavigationBar({super.key});
@@ -14,8 +14,8 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
   late int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    MyHomePage(),
     InformationScreen(),
+    PetScreen(),
     SettingsScreen(),
   ];
 

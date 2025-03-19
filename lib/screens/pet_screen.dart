@@ -4,14 +4,14 @@ import 'package:pet_game/widgets/custom_container.dart';
 import '../models/need_model.dart';
 
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class PetScreen extends StatefulWidget {
+  const PetScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<PetScreen> createState() => _PetScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _PetScreenState extends State<PetScreen> {
   String petStatus = " ";
   final NeedModel needModel = NeedModel(); // initialize need models
 

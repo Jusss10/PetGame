@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NeedModel {
-  int hungerLevel = 10; // Default hunger level
+  int hungerLevel = 10;
   int dirtyLevel = 10;
   int attentionLevel = 10;
   late SharedPreferences prefs; // initialize later
