@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/pet_model.dart';
-import 'home_page.dart';
+import '../widgets/navigation_bar.dart';
 
 class PetCreationScreen extends StatefulWidget {
   const PetCreationScreen({super.key});
@@ -24,7 +24,7 @@ class _PetCreationScreenState extends State<PetCreationScreen> {
     if (petName.isNotEmpty) {
       await _petModel.savePet(petName);
       if (mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigationBar()));
       }
     }
   }
