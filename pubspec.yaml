@@ -64,6 +64,8 @@ flutter:
     - assets/images/rightPet.png
     - assets/images/leftPet.png
     - assets/audio/foodSound.wav
+    - assets/audio/bathSound.wav
+    - assets/audio/attentionSound.wav
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

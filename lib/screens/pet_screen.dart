@@ -31,26 +31,45 @@ class _PetScreenState extends State<PetScreen> {
   }
 
   void feedPet() {
-    setState(() {
-      petStatus = "mmmhhh delicious";
-    });
-    player.play(AssetSource('audio/foodSound.wav'));
-    needModel.updateHungerLevel(
-        needModel.hungerLevel + 2); // increase hunger level
+    if(needModel.hungerLevel == 10) {
+      setState(() {
+        petStatus = "Im full, please stop feeding me";
+      });
+    } else {
+      setState(() {
+        petStatus = "mmmhhh delicious";
+      });
+      player.play(AssetSource('audio/foodSound.wav'));
+      needModel.updateHungerLevel(needModel.hungerLevel + 2);
+    }
   }
 
   void bathPet() {
-    setState(() {
-      petStatus = "Now im clean!!";
-    });
-    needModel.updateDirtyLevel(needModel.dirtyLevel + 2);
+    if(needModel.dirtyLevel == 10) {
+      setState(() {
+        petStatus = "Im not stinking anymore, so stop";
+      });
+    } else {
+      setState(() {
+        petStatus = "Now im clean!!";
+      });
+      player.play(AssetSource('audio/bathSound.wav'));
+      needModel.updateDirtyLevel(needModel.dirtyLevel + 2);
+    }
   }
 
   void cuddlePet() {
-    setState(() {
-      petStatus = "I feel loved, thank u";
-    });
-    needModel.updateAttentionLevel(needModel.attentionLevel + 2);
+    if(needModel.attentionLevel == 10) {
+      setState(() {
+        petStatus = "Can i please get some alone time, thanks";
+      });
+    } else {
+      setState(() {
+        petStatus = "I feel loved, thank u";
+      });
+      player.play(AssetSource('audio/attentionSound.wav'));
+      needModel.updateAttentionLevel(needModel.attentionLevel + 2);
+    }
   }
 
   @override
