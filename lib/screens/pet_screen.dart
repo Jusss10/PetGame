@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pet_game/widgets/custom_button.dart';
 import 'package:pet_game/widgets/custom_container.dart';
 import '../models/need_model.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 
 class PetScreen extends StatefulWidget {
@@ -14,21 +15,26 @@ class PetScreen extends StatefulWidget {
 class _PetScreenState extends State<PetScreen> {
   String petStatus = " ";
   final NeedModel needModel = NeedModel(); // initialize need models
+  late AudioPlayer player = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
     needModel.initNeeds(); // initialize need models
+
     ///starting all decreases for needs ///
     needModel.decreaseHungerPeriodically();
     needModel.decreaseDirtyPeriodically();
     needModel.decreaseAttentionPeriodically();
+
+    player = AudioPlayer();
   }
 
   void feedPet() {
     setState(() {
       petStatus = "mmmhhh delicious";
     });
+    player.play(AssetSource('audio/foodSound.wav'));
     needModel.updateHungerLevel(
         needModel.hungerLevel + 2); // increase hunger level
   }
