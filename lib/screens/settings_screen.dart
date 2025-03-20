@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/pet_model.dart';
 import '../widgets/other_button.dart';
 import 'creation.screen.dart';
@@ -12,6 +13,24 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String selectedSpeed = "Normal";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSpeedSetting();
+  }
+
+  Future<void> _loadSpeedSetting() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedSpeed = prefs.getString('selectedSpeed') ?? "Normal";
+    });
+  }
+
+  Future<void> _saveSpeedSetting(String speed) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selectedSpeed', speed);
+  }
 
   void _showSpeedSettings() {
     showModalBottomSheet(
@@ -49,9 +68,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       value: value,
       groupValue: selectedSpeed,
       onChanged: (newValue) {
-        setState(() {
-          selectedSpeed = newValue!;
-        });
+        if (newValue != null) {
+          setState(() {
+            selectedSpeed = newValue;
+          });
+          _saveSpeedSetting(newValue);
+        }
         Navigator.pop(context);
       },
     );
