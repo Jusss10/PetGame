@@ -1,6 +1,6 @@
-import 'dart:convert'; // For JSON decoding
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // Import the http package
+import 'package:http/http.dart' as http;
 import '../models/pet_model.dart';
 import '../widgets/other_button.dart';
 
@@ -14,7 +14,7 @@ class InformationScreen extends StatefulWidget {
 class _InformationScreenState extends State<InformationScreen> {
   final PetModel petModel = PetModel();
   bool isLoading = true;
-  String apiKey = 'CRkrkhZf3+VMLvelOpFNcQ==bNAFBDe0ZYRnyD2t'; // Replace with your actual API Key
+  String apiKey = 'CRkrkhZf3+VMLvelOpFNcQ==bNAFBDe0ZYRnyD2t';
 
   @override
   void initState() {
@@ -27,29 +27,27 @@ class _InformationScreenState extends State<InformationScreen> {
     setState(() => isLoading = false);
   }
 
-  // Function to fetch dog information from the API
+  /// API ///
   Future<void> _fetchPetFact() async {
     final response = await http.get(
-      Uri.parse('https://api.api-ninjas.com/v1/dogs?name=golden retriever'), // You can modify the breed here
-      headers: {'X-Api-Key': apiKey}, // Add your API key in the header
+      Uri.parse('https://api.api-ninjas.com/v1/dogs?name=golden retriever'),
+      headers: {'X-Api-Key': apiKey},
     );
 
     if (response.statusCode == 200) {
-      // If the response is successful, decode the JSON and extract the fact
       final List<dynamic> data = jsonDecode(response.body);
       String fact = "Breed: ${data[0]['name']}\n"
           "Good with children: ${data[0]['good_with_children']}\n"
           "Life expectancy: ${data[0]['min_life_expectancy']} - ${data[0]['max_life_expectancy']} years\n"
           "Shedding: ${data[0]['shedding']}";
 
-      _showPopup("Dog Fact", fact); // Show the result in the popup
+      _showPopup("Dog Fact", fact);
     } else {
-      // If the API call fails, show an error message
       _showPopup("Error", "Failed to load dog fact.");
     }
   }
 
-  // Function to show the modal popup
+  // Popup
   void _showPopup(String title, String message) {
     showModalBottomSheet(
       context: context,
@@ -99,7 +97,7 @@ class _InformationScreenState extends State<InformationScreen> {
           ),
           OtherButton(
             text: "Animal facts",
-            onPressed: _fetchPetFact, // Trigger the fetch function for dog facts
+            onPressed: _fetchPetFact,
           ),
         ],
       ),

@@ -15,22 +15,20 @@ class NeedModel {
   Stream<int> get dirtyStream => _dirtyController.stream;
   Stream<int> get attentionStream => _attentionController.stream;
 
+
   String selectedSpeed = "Normal";
   Map<String, int> speedIntervals = {
-    "Slow": 150,
-    "Normal": 100,
-    "Fast": 50
+    "Slow": 100000,
+    "Normal": 10000,
+    "Fast": 800
   };
 
-  Future<void> initNeeds() async {
-    prefs = await SharedPreferences.getInstance();
-    selectedSpeed = prefs.getString('selectedSpeed') ?? "Normal";
+  void initNeeds() {
+    _hungerController.add(hungerLevel);
+    _dirtyController.add(dirtyLevel);
+    _attentionController.add(attentionLevel);
 
-    await loadHungerLevel();
-    await loadDirtyLevel();
-    await loadAttentionLevel();
-
-    startDecreaseTimers();
+    _startNeedDepletion();
   }
 
   Future<void> loadHungerLevel() async {
@@ -60,73 +58,58 @@ class NeedModel {
     await prefs.setInt('attentionLevel', attentionLevel);
   }
 
-  Future<void> updateHungerLevel(int newLevel) async {
-    hungerLevel = newLevel.clamp(0, 10);
-    await saveHungerLevel();
-    _hungerController.sink.add(hungerLevel);
+  /// Decrease needs based on speed and multipliers
+  void _startNeedDepletion() {
+    _decreaseHunger();
+    _decreaseDirty();
+    _decreaseAttention();
   }
 
-  Future<void> updateDirtyLevel(int newLevel) async {
-    dirtyLevel = newLevel.clamp(0, 10);
-    await saveDirtyLevel();
-    _dirtyController.sink.add(dirtyLevel);
-  }
-
-  Future<void> updateAttentionLevel(int newLevel) async {
-    attentionLevel = newLevel.clamp(0, 10);
-    await saveAttentionLevel();
-    _attentionController.sink.add(attentionLevel);
-  }
-
-  /// Decrease needs based on selected speed ///
-  void startDecreaseTimers() {
-    decreaseHungerPeriodically();
-    decreaseDirtyPeriodically();
-    decreaseAttentionPeriodically();
-  }
-
-  void decreaseHungerPeriodically() {
-    Future.delayed(Duration(seconds: speedIntervals[selectedSpeed]!), () async {
+  void _decreaseHunger() {
+    Timer.periodic(Duration(milliseconds: speedIntervals[selectedSpeed]!), (timer) {
       if (hungerLevel > 0) {
-        hungerLevel--;
-        await saveHungerLevel();
-        _hungerController.sink.add(hungerLevel);
+        hungerLevel -= (1 * 1.55).toInt().clamp(0, 10);
+        _hungerController.add(hungerLevel);
       }
-      decreaseHungerPeriodically();
     });
   }
 
-  void decreaseDirtyPeriodically() {
-    Future.delayed(Duration(seconds: speedIntervals[selectedSpeed]!), () async {
+  void _decreaseDirty() {
+    Timer.periodic(Duration(milliseconds: speedIntervals[selectedSpeed]! + 190), (timer) {
       if (dirtyLevel > 0) {
-        dirtyLevel--;
-        await saveDirtyLevel();
-        _dirtyController.sink.add(dirtyLevel);
+        dirtyLevel -= (1 * 2).toInt().clamp(0, 10);
+        _dirtyController.add(dirtyLevel);
       }
-      decreaseDirtyPeriodically();
     });
   }
 
-  void decreaseAttentionPeriodically() {
-    Future.delayed(Duration(seconds: speedIntervals[selectedSpeed]!), () async {
+  void _decreaseAttention() {
+    Timer.periodic(Duration(milliseconds: speedIntervals[selectedSpeed]! + 66), (timer) {
       if (attentionLevel > 0) {
-        attentionLevel--;
-        await saveAttentionLevel();
-        _attentionController.sink.add(attentionLevel);
+        attentionLevel -= (1 * 1).toInt().clamp(0, 10);
+        _attentionController.add(attentionLevel);
       }
-      decreaseAttentionPeriodically();
     });
   }
 
-  Future<void> updateSpeed(String newSpeed) async {
-    selectedSpeed = newSpeed;
-    await prefs.setString('selectedSpeed', newSpeed);
-    startDecreaseTimers();
+  void updateHungerLevel(int newLevel) {
+    hungerLevel = newLevel.clamp(0, 10);
+    _hungerController.add(hungerLevel);
   }
 
-  void dispose() {
-    _hungerController.close();
-    _dirtyController.close();
-    _attentionController.close();
+  void updateDirtyLevel(int newLevel) {
+    dirtyLevel = newLevel.clamp(0, 10);
+    _dirtyController.add(dirtyLevel);
+  }
+
+  void updateAttentionLevel(int newLevel) {
+    attentionLevel = newLevel.clamp(0, 10);
+    _attentionController.add(attentionLevel);
+  }
+
+  void setSpeed(String newSpeed) {
+    if (speedIntervals.containsKey(newSpeed)) {
+      selectedSpeed = newSpeed;
+    }
   }
 }
