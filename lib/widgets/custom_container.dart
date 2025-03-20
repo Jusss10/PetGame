@@ -21,20 +21,23 @@ class CustomContainer extends StatelessWidget {
           children: [
             Icon(icon, color: Colors.green, size: 30),
             const SizedBox(height: 5),
-            Container(
-              width: 50, // Adjust width to fit within the layout
+
+            Container(//progress bar
+              width: 50,
               height: 10,
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: Container(
+
+              child: Container(// progressbar itself
                 width: 50,
                 height: 10,
                 decoration: BoxDecoration(
                   color: Colors.grey[300], // empty bar
                   borderRadius: BorderRadius.circular(5),
                 ),
+
                 child: Stack(
                   children: [
                     Container(
@@ -45,12 +48,13 @@ class CustomContainer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
-                    FractionallySizedBox(
+
+                    FractionallySizedBox(//filling of bar
                       widthFactor: needLevel / 10,
                       child: Container(
                         height: 10,
                         decoration: BoxDecoration(
-                          color: Colors.green, // Color for filled part
+                          color: Colors.green,
                           borderRadius: BorderRadius.circular(5),
                         ),
                       ),
