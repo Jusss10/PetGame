@@ -17,29 +17,49 @@ class CustomContainer extends StatelessWidget {
 
         int needLevel = snapshot.data ?? 10;
 
-        return Container(
-          padding: const EdgeInsets.all(8),
-          color: Colors.black,
-          child: Row(
-            children: [
-              Icon(icon, color: Colors.green, size: 25),
-              const SizedBox(width: 8),
-              Container(
-                width: 100,
-                height: 10,
-                color: Colors.grey,
-                child: Row(
-                  children: List.generate(needLevel, (index) =>
-                  Container(
-                      width: 10,
-                      height: 10,
-                      color: Colors.green,
-                    ),
-                  ),
-                ),
+        return Column(
+          children: [
+            Icon(icon, color: Colors.green, size: 30),
+            const SizedBox(height: 5),
+            Container(
+              width: 50, // Adjust width to fit within the layout
+              height: 10,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(5),
               ),
-            ],
-          ),
+              child: Container(
+                width: 50,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300], // empty bar
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    FractionallySizedBox(
+                      widthFactor: needLevel / 10,
+                      child: Container(
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: Colors.green, // Color for filled part
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ),
+          ],
         );
       },
     );

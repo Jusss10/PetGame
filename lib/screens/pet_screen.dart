@@ -75,44 +75,62 @@ class _PetScreenState extends State<PetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-
-      ),
-      body: Column( //now it vertically
+      appBar: AppBar(),
+      body: Column(
         children: [
-          CustomContainer(
-            icon: Icons.fastfood,
-            needStream: needModel.hungerStream,
-          ),
-          const SizedBox(height: 5),
-          CustomContainer(
-            icon: Icons.bathtub,
-            needStream: needModel.dirtyStream,
-          ),
-          const SizedBox(height: 5),
-          CustomContainer(
-            icon: Icons.pets,
-            needStream: needModel.attentionStream,
-          ),
-          const SizedBox(height: 100),
-
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const SizedBox(height: 200),
-                Text(petStatus, style: const TextStyle(fontSize: 20)),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CustomButton(icon: Icons.fastfood, onPressed: feedPet),
-                    CustomButton(icon: Icons.bathtub, onPressed: bathPet),
-                    CustomButton(icon: Icons.pets, onPressed: cuddlePet),
-                  ],
+          // Needs Row (Displays the needs horizontally at the top)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: CustomContainer(
+                    icon: Icons.fastfood,
+                    needStream: needModel.hungerStream,
+                  ),
+                ),
+                Expanded(
+                  child: CustomContainer(
+                    icon: Icons.bathtub,
+                    needStream: needModel.dirtyStream,
+                  ),
+                ),
+                Expanded(
+                  child: CustomContainer(
+                    icon: Icons.bedtime,
+                    needStream: needModel.attentionStream,
+                  ),
+                ),
+                Expanded(
+                  child: CustomContainer(
+                    icon: Icons.pets,
+                    needStream: needModel.attentionStream,
+                  ),
+                ),
+                Expanded(
+                  child: CustomContainer(
+                    icon: Icons.emoji_emotions,
+                    needStream: needModel.attentionStream,
+                  ),
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 20),
+
+          // Pet status text
+          Text(petStatus, style: const TextStyle(fontSize: 20)),
+          const SizedBox(height: 20),
+
+          // Buttons Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomButton(icon: Icons.fastfood, onPressed: feedPet),
+              CustomButton(icon: Icons.bathtub, onPressed: bathPet),
+              CustomButton(icon: Icons.pets, onPressed: cuddlePet),
+            ],
           ),
         ],
       ),
