@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/pet_model.dart';
+import '../models/speed_settings.dart';
 import '../widgets/other_button.dart';
 import 'creation.screen.dart';
 
@@ -12,8 +12,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String selectedSpeed = "Normal";
-
   @override
   void initState() {
     super.initState();
@@ -21,15 +19,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _loadSpeedSetting() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      selectedSpeed = prefs.getString('selectedSpeed') ?? "Normal";
-    });
+    await SpeedSettings.loadSpeedSetting();
+    setState(() {});
   }
 
   Future<void> _saveSpeedSetting(String speed) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selectedSpeed', speed);
+    await SpeedSettings.saveSpeedSetting(speed);
+    setState(() {});
   }
 
   void _showSpeedSettings() {
@@ -39,44 +35,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Change Decrease Rate",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const Divider(),
-              _buildRadioButton("Slow", "Slow (Needs decrease slowly)"),
-              _buildRadioButton("Normal", "Normal (Default speed)"),
-              _buildRadioButton("Fast", "Fast (Needs decrease quickly)"),
-              const SizedBox(height: 20),
-              OtherButton(text: "Close", onPressed: () => Navigator.pop(context)),
-            ],
-          ),
-        );
-      },
+      builder: (context) => SpeedSettingsModal(
+        selectedSpeed: SpeedSettings.selectedSpeed,
+        onSpeedSelected: (speed) async {
+          await _saveSpeedSetting(speed);
+        },
+      ),
     );
   }
 
-  Widget _buildRadioButton(String value, String text) {
-    return RadioListTile<String>(
-      title: Text(text),
-      value: value,
-      groupValue: selectedSpeed,
-      onChanged: (newValue) {
-        if (newValue != null) {
-          setState(() {
-            selectedSpeed = newValue;
-          });
-          _saveSpeedSetting(newValue);
-        }
-        Navigator.pop(context);
-      },
-    );
+  Future<void> _resetPet() async {
+    await PetModel().resetPet();
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const PetCreationScreen()),
+      );
+    }
   }
 
   @override
@@ -87,20 +62,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           OtherButton(text: "Change Decrease Rate", onPressed: _showSpeedSettings),
-          OtherButton(
-            text: "Reset Pet",
-            onPressed: () async {
-              await PetModel().resetPet();
-              if (context.mounted) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const PetCreationScreen()),
-                );
-              }
-            },
-          ),
+          OtherButton(text: "Reset Pet", onPressed: _resetPet),
         ],
       ),
+    );
+  }
+}
+
+class SpeedSettingsModal extends StatelessWidget {
+  final String selectedSpeed;
+  final ValueChanged<String> onSpeedSelected;
+
+  const SpeedSettingsModal({
+    super.key,
+    required this.selectedSpeed,
+    required this.onSpeedSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            "Change Decrease Rate",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const Divider(),
+          _buildRadioButton(context, "Slow", "Slow (Needs decrease slowly)"),
+          _buildRadioButton(context, "Normal", "Normal (Default speed)"),
+          _buildRadioButton(context, "Fast", "Fast (Needs decrease quickly)"),
+          const SizedBox(height: 20),
+          OtherButton(text: "Close", onPressed: () => Navigator.pop(context)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRadioButton(BuildContext context, String value, String text) {
+    return RadioListTile<String>(
+      title: Text(text),
+      value: value,
+      groupValue: selectedSpeed,
+      onChanged: (newValue) {
+        if (newValue != null) {
+          onSpeedSelected(newValue);
+        }
+        Navigator.pop(context);
+      },
     );
   }
 }

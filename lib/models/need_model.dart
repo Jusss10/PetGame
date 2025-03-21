@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:pet_game/models/speed_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NeedModel {
@@ -7,6 +7,8 @@ class NeedModel {
   int dirtyLevel = 10;
   int attentionLevel = 10;
   int sleepLevel = 10;
+
+  late Timer _needTimer;
 
   late SharedPreferences prefs;
   bool isSleeping = false;
@@ -34,7 +36,7 @@ class NeedModel {
     _attentionController.add(attentionLevel);
     _sleepController.add(sleepLevel);
 
-    _startNeedDepletion();
+    _startNeedTimer();
   }
 
   Future<void> loadNeeds() async {
@@ -54,6 +56,17 @@ class NeedModel {
     await prefs.setInt('dirtyLevel', dirtyLevel);
     await prefs.setInt('attentionLevel', attentionLevel);
     await prefs.setInt('sleepLevel', sleepLevel);
+  }
+
+  void _startNeedTimer() {
+    _needTimer = Timer.periodic(Duration(milliseconds: SpeedSettings.currentInterval), (timer) {
+      _startNeedDepletion();
+    });
+  }
+
+  void _restartNeedTimer() {
+    _needTimer.cancel();
+    _startNeedTimer();
   }
 
   /// Starts decreasing needs over time
@@ -140,5 +153,6 @@ class NeedModel {
       selectedSpeed = newSpeed;
     }
   }
+
 }
 
