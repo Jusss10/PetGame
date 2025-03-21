@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 import '../models/pet_model.dart';
 import '../widgets/other_button.dart';
 
@@ -28,7 +28,7 @@ class _InformationScreenState extends State<InformationScreen> {
     setState(() => isLoading = false);
   }
 
-  /// API ///
+  /// Fetch Dog Facts from API
   Future<void> _fetchPetFact() async {
     final response = await http.get(
       Uri.parse('https://api.api-ninjas.com/v1/dogs?name=golden retriever'),
@@ -48,7 +48,7 @@ class _InformationScreenState extends State<InformationScreen> {
     }
   }
 
-  // Popup
+  /// Show Text Popup
   void _showPopup(String title, String message) {
     showModalBottomSheet(
       context: context,
@@ -75,14 +75,16 @@ class _InformationScreenState extends State<InformationScreen> {
     );
   }
 
-  // Open YouTube Video
-  void _launchYouTubeVideo() async {
-    final Uri url = Uri.parse('https://www.youtube.com/watch?v=VUUL5HLW4Lg');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      _showPopup("Error", "Could not launch video.");
-    }
+  /// Show Video Popup
+  void _showVideoPopup() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => const VideoPopup(),
+    );
   }
 
   @override
@@ -96,15 +98,18 @@ class _InformationScreenState extends State<InformationScreen> {
         children: [
           OtherButton(
             text: "Pet Info",
-            onPressed: () => _showPopup("Pet Info", "Pet Name: ${petModel.petName}\nPet Gender: ${petModel.petGender}\n\nTake good care of your pet!"),
+            onPressed: () => _showPopup("Pet Info",
+                "Pet Name: ${petModel.petName}\nPet Gender: ${petModel.petGender}\n\nTake good care of your pet!"),
           ),
           OtherButton(
             text: "Credits",
-            onPressed: () => _showPopup("Credits", "Justine Dor made the game\nThanks to everyone who contributed."),
+            onPressed: () => _showPopup("Credits",
+                "Justine Dor made the game\nThanks to everyone who contributed."),
           ),
           OtherButton(
             text: "How to Play",
-            onPressed: () => _showPopup("How to Play", "Feed your pet, bathe it, and give it attention."),
+            onPressed: () => _showPopup("How to Play",
+                "Feed your pet, bathe it, and give it attention."),
           ),
           OtherButton(
             text: "Animal Facts",
@@ -112,7 +117,58 @@ class _InformationScreenState extends State<InformationScreen> {
           ),
           OtherButton(
             text: "Tamagotchi Video",
-            onPressed: _launchYouTubeVideo,
+            onPressed: _showVideoPopup,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Popup Video Player
+class VideoPopup extends StatefulWidget {
+  const VideoPopup({super.key});
+
+  @override
+  _VideoPopupState createState() => _VideoPopupState();
+}
+
+class _VideoPopupState extends State<VideoPopup> {
+  late VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.asset('assets/video/tama.mp4')
+      ..initialize().then((_) {
+        setState(() {}); // Refresh to show video
+        _controller.play(); // Auto-play video
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _controller.value.isInitialized
+              ? AspectRatio(
+            aspectRatio: _controller.value.aspectRatio,
+            child: VideoPlayer(_controller),
+          )
+              : const CircularProgressIndicator(),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Close"),
           ),
         ],
       ),
