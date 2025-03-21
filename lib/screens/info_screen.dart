@@ -141,8 +141,8 @@ class _VideoPopupState extends State<VideoPopup> {
     super.initState();
     _controller = VideoPlayerController.asset('assets/video/tama.mp4')
       ..initialize().then((_) {
-        setState(() {}); // Refresh to show video
-        _controller.play(); // Auto-play video
+        setState(() {});
+        _controller.play();
       });
   }
 

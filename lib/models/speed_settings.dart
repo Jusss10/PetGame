@@ -1,14 +1,14 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/need_model.dart';
 
 class SpeedSettings {
   static const Map<String, int> speedIntervals = {
-    "Slow": 2,  // 3 seconds
-    "Normal": 10,  // 1.5 seconds
-    "Fast": 0  // 0.75 seconds
+    "Slow": 2,
+    "Normal": 10,
+    "Fast": 0
   };
 
   static String selectedSpeed = "Normal";
-
 
   static Future<void> loadSpeedSetting() async {
     final prefs = await SharedPreferences.getInstance();
@@ -19,8 +19,10 @@ class SpeedSettings {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selectedSpeed', speed);
     selectedSpeed = speed;
+
+    // Notify NeedModel to update immediately
+    NeedModel().updateSpeedInterval();
   }
 
-  // Get the interval for the current selected speed
-  static int get currentInterval => speedIntervals[selectedSpeed] ?? 1500;
+  static int get currentInterval => speedIntervals[selectedSpeed] ?? 10;
 }

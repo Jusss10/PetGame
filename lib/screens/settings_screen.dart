@@ -45,6 +45,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // confirmation popup
+  void _showResetConfirmation() {
+    _showPopup(
+      "Are you sure?",
+      "This will reset the pet, and the progress will be lost. Do you want to continue?",
+          () {
+        Navigator.pop(context);
+        _resetPet();
+      },
+    );
+  }
+
   Future<void> _resetPet() async {
     await PetModel().resetPet();
     if (mounted) {
@@ -55,6 +67,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  // popup method
+  void _showPopup(String title, String message, VoidCallback onConfirmed) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Divider(),
+            Text(message, style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  onPressed: onConfirmed,
+                  child: const Text("Confirm"),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           OtherButton(text: "Change Decrease Rate", onPressed: _showSpeedSettings),
-          OtherButton(text: "Reset Pet", onPressed: _resetPet),
+          OtherButton(text: "Reset Pet", onPressed: _showResetConfirmation),
         ],
       ),
     );

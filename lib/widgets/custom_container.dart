@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomContainer extends StatelessWidget {
   final IconData icon;
-  final Stream<int> needStream; //make a globalStream
+  final Stream<int> needStream;
 
   const CustomContainer({super.key, required this.icon, required this.needStream});
 

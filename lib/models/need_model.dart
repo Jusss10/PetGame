@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:pet_game/models/speed_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,6 +22,8 @@ class NeedModel {
   Stream<int> get attentionStream => _attentionController.stream;
   Stream<int> get sleepStream => _sleepController.stream;
 
+  int interval = SpeedSettings.currentInterval;
+
   void initNeeds() {
     _hungerController.add(hungerLevel);
     _dirtyController.add(dirtyLevel);
@@ -31,6 +34,7 @@ class NeedModel {
   }
 
   Future<void> loadNeeds() async {
+    prefs = await SharedPreferences.getInstance();
     hungerLevel = prefs.getInt('hungerLevel') ?? 10;
     dirtyLevel = prefs.getInt('dirtyLevel') ?? 10;
     attentionLevel = prefs.getInt('attentionLevel') ?? 10;
@@ -58,7 +62,7 @@ class NeedModel {
   }
 
   void _decreaseHunger() {
-    Timer.periodic(Duration(seconds: 1 + SpeedSettings.currentInterval), (timer) {
+    Timer.periodic(Duration(seconds: 1 + interval), (timer) {
       if (!isSleeping && hungerLevel > 0) {
         hungerLevel -= (1).toInt().clamp(0, 10);
         _hungerController.add(hungerLevel);
@@ -67,7 +71,7 @@ class NeedModel {
   }
 
   void _decreaseDirty() {
-    Timer.periodic(Duration(seconds: 2 + SpeedSettings.currentInterval), (timer) {
+    Timer.periodic(Duration(seconds: 2 + interval), (timer) {
       if (!isSleeping && dirtyLevel > 0) {
         dirtyLevel -= (1).toInt().clamp(0, 10);
         _dirtyController.add(dirtyLevel);
@@ -76,7 +80,7 @@ class NeedModel {
   }
 
   void _decreaseAttention() {
-    Timer.periodic(Duration(seconds: 3 + SpeedSettings.currentInterval), (timer) {
+    Timer.periodic(Duration(seconds: 3 + interval), (timer) {
       if (!isSleeping && attentionLevel > 0) {
         attentionLevel -= (1).toInt().clamp(0, 10);
         _attentionController.add(attentionLevel);
@@ -85,7 +89,7 @@ class NeedModel {
   }
 
   void _decreaseSleep() {
-    Timer.periodic(Duration(seconds: 2 + SpeedSettings.currentInterval), (timer) {
+    Timer.periodic(Duration(seconds: 2 + interval), (timer) {
       if (!isSleeping && sleepLevel > 0) {
         sleepLevel -= 1;
         _sleepController.add(sleepLevel);
@@ -124,5 +128,15 @@ class NeedModel {
     _sleepController.add(sleepLevel);
   }
 
-}
+  void updateSpeedInterval() {
+    interval = SpeedSettings.currentInterval;
+    _restartNeedDepletion();
+  }
 
+  void _restartNeedDepletion() {
+    _decreaseHunger();
+    _decreaseDirty();
+    _decreaseAttention();
+    _decreaseSleep();
+  }
+}
