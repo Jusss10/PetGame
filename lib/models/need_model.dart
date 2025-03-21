@@ -58,7 +58,7 @@ class NeedModel {
   }
 
   void _decreaseHunger() {
-    Timer.periodic(Duration(seconds: 10 + SpeedSettings.currentInterval), (timer) {
+    Timer.periodic(Duration(seconds: 1 + SpeedSettings.currentInterval), (timer) {
       if (!isSleeping && hungerLevel > 0) {
         hungerLevel -= (1).toInt().clamp(0, 10);
         _hungerController.add(hungerLevel);
@@ -67,7 +67,7 @@ class NeedModel {
   }
 
   void _decreaseDirty() {
-    Timer.periodic(Duration(seconds: 10 + SpeedSettings.currentInterval), (timer) {
+    Timer.periodic(Duration(seconds: 2 + SpeedSettings.currentInterval), (timer) {
       if (!isSleeping && dirtyLevel > 0) {
         dirtyLevel -= (1).toInt().clamp(0, 10);
         _dirtyController.add(dirtyLevel);
@@ -76,7 +76,7 @@ class NeedModel {
   }
 
   void _decreaseAttention() {
-    Timer.periodic(Duration(seconds: 10 + SpeedSettings.currentInterval), (timer) {
+    Timer.periodic(Duration(seconds: 3 + SpeedSettings.currentInterval), (timer) {
       if (!isSleeping && attentionLevel > 0) {
         attentionLevel -= (1).toInt().clamp(0, 10);
         _attentionController.add(attentionLevel);
@@ -85,7 +85,7 @@ class NeedModel {
   }
 
   void _decreaseSleep() {
-    Timer.periodic(Duration(seconds: 30 + SpeedSettings.currentInterval), (timer) {
+    Timer.periodic(Duration(seconds: 2 + SpeedSettings.currentInterval), (timer) {
       if (!isSleeping && sleepLevel > 0) {
         sleepLevel -= 1;
         _sleepController.add(sleepLevel);

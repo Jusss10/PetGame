@@ -16,7 +16,6 @@ class _PetScreenState extends State<PetScreen> {
   String petStatus = " ";
   final NeedModel needModel = NeedModel();
   late AudioPlayer player;
-  final MovingPet movingPet = MovingPet();
 
   @override
   void initState() {
@@ -108,7 +107,7 @@ class _PetScreenState extends State<PetScreen> {
           const SizedBox(height: 20),
 
           // Pet Moving
-          movingPet,
+          MovingPet(needModel: needModel),
 
           // Pet Status
           Text(petStatus, style: const TextStyle(fontSize: 20)),

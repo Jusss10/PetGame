@@ -66,6 +66,7 @@ flutter:
   assets:
     - assets/images/rightPet.png
     - assets/images/leftPet.png
+    - assets/images/sleep.png
     - assets/audio/foodSound.wav
     - assets/audio/bathSound.wav
     - assets/audio/attentionSound.wav
