@@ -39,6 +39,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         selectedSpeed: SpeedSettings.selectedSpeed,
         onSpeedSelected: (speed) async {
           await _saveSpeedSetting(speed);
+          setState(() {});
         },
       ),
     );

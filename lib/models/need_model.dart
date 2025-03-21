@@ -8,8 +8,6 @@ class NeedModel {
   int attentionLevel = 10;
   int sleepLevel = 10;
 
-  late Timer _needTimer;
-
   late SharedPreferences prefs;
   bool isSleeping = false;
 
@@ -23,20 +21,13 @@ class NeedModel {
   Stream<int> get attentionStream => _attentionController.stream;
   Stream<int> get sleepStream => _sleepController.stream;
 
-  String selectedSpeed = "Normal";
-  Map<String, double> speedIntervals = {
-    "Slow": 0.9,
-    "Normal": 1.4,
-    "Fast": 2
-  };
-
   void initNeeds() {
     _hungerController.add(hungerLevel);
     _dirtyController.add(dirtyLevel);
     _attentionController.add(attentionLevel);
     _sleepController.add(sleepLevel);
 
-    _startNeedTimer();
+    _startNeedDepletion();
   }
 
   Future<void> loadNeeds() async {
@@ -58,17 +49,6 @@ class NeedModel {
     await prefs.setInt('sleepLevel', sleepLevel);
   }
 
-  void _startNeedTimer() {
-    _needTimer = Timer.periodic(Duration(milliseconds: SpeedSettings.currentInterval), (timer) {
-      _startNeedDepletion();
-    });
-  }
-
-  void _restartNeedTimer() {
-    _needTimer.cancel();
-    _startNeedTimer();
-  }
-
   /// Starts decreasing needs over time
   void _startNeedDepletion() {
     _decreaseHunger();
@@ -78,34 +58,34 @@ class NeedModel {
   }
 
   void _decreaseHunger() {
-    Timer.periodic(Duration(milliseconds: 1000), (timer) {
+    Timer.periodic(Duration(seconds: 10 + SpeedSettings.currentInterval), (timer) {
       if (!isSleeping && hungerLevel > 0) {
-        hungerLevel -= (1 * speedIntervals[selectedSpeed]!).toInt().clamp(0, 10);
+        hungerLevel -= (1).toInt().clamp(0, 10);
         _hungerController.add(hungerLevel);
       }
     });
   }
 
   void _decreaseDirty() {
-    Timer.periodic(Duration(milliseconds: 800 + 190), (timer) {
+    Timer.periodic(Duration(seconds: 10 + SpeedSettings.currentInterval), (timer) {
       if (!isSleeping && dirtyLevel > 0) {
-        dirtyLevel -= (1 * speedIntervals[selectedSpeed]!).toInt().clamp(0, 10);
+        dirtyLevel -= (1).toInt().clamp(0, 10);
         _dirtyController.add(dirtyLevel);
       }
     });
   }
 
   void _decreaseAttention() {
-    Timer.periodic(Duration(milliseconds: 1800 + 66), (timer) {
+    Timer.periodic(Duration(seconds: 10 + SpeedSettings.currentInterval), (timer) {
       if (!isSleeping && attentionLevel > 0) {
-        attentionLevel -= (1 * speedIntervals[selectedSpeed]!).toInt().clamp(0, 10);
+        attentionLevel -= (1).toInt().clamp(0, 10);
         _attentionController.add(attentionLevel);
       }
     });
   }
 
   void _decreaseSleep() {
-    Timer.periodic(Duration(milliseconds: 1800 + 300), (timer) {
+    Timer.periodic(Duration(seconds: 30 + SpeedSettings.currentInterval), (timer) {
       if (!isSleeping && sleepLevel > 0) {
         sleepLevel -= 1;
         _sleepController.add(sleepLevel);
@@ -127,31 +107,21 @@ class NeedModel {
   void updateHungerLevel(int newLevel) {
     hungerLevel = newLevel.clamp(0, 10);
     _hungerController.add(hungerLevel);
-    print("Attention Level Updated: $hungerLevel"); // Debugging
   }
 
   void updateDirtyLevel(int newLevel) {
     dirtyLevel = newLevel.clamp(0, 10);
     _dirtyController.add(dirtyLevel);
-    print("Attention Level Updated: $dirtyLevel"); // Debugging
   }
 
   void updateAttentionLevel(int newLevel) {
     attentionLevel = newLevel.clamp(0, 10);
     _attentionController.add(attentionLevel);
-    print("Attention Level Updated: $attentionLevel"); // Debugging
   }
-
 
   void updateSleepLevel(int newLevel) {
     sleepLevel = newLevel.clamp(0, 10);
     _sleepController.add(sleepLevel);
-  }
-
-  void setSpeed(String newSpeed) {
-    if (speedIntervals.containsKey(newSpeed)) {
-      selectedSpeed = newSpeed;
-    }
   }
 
 }
