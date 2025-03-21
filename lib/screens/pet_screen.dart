@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pet_game/widgets/custom_button.dart';
 import 'package:pet_game/widgets/custom_container.dart';
+import 'package:pet_game/widgets/moving_pet.dart';
 import '../models/need_model.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -15,6 +16,7 @@ class _PetScreenState extends State<PetScreen> {
   String petStatus = " ";
   final NeedModel needModel = NeedModel();
   late AudioPlayer player;
+  final MovingPet movingPet = MovingPet();
 
   @override
   void initState() {
@@ -32,6 +34,8 @@ class _PetScreenState extends State<PetScreen> {
   void feedPet() {
     if (needModel.hungerLevel == 10) {
       updatePetStatus("I'm full, please stop feeding me.");
+    } else if (needModel.isSleeping) {
+      updatePetStatus("I'm sleeping");
     } else {
       updatePetStatus("Mmmhhh delicious!");
       player.play(AssetSource('audio/foodSound.wav'));
@@ -42,6 +46,8 @@ class _PetScreenState extends State<PetScreen> {
   void bathPet() {
     if (needModel.dirtyLevel == 10) {
       updatePetStatus("I'm not stinking anymore, so stop.");
+    } else if (needModel.isSleeping) {
+      updatePetStatus("I'm sleeping");
     } else {
       updatePetStatus("Now I'm clean!!");
       player.play(AssetSource('audio/bathSound.wav'));
@@ -52,6 +58,8 @@ class _PetScreenState extends State<PetScreen> {
   void cuddlePet() {
     if (needModel.attentionLevel == 10) {
       updatePetStatus("Can I please get some alone time? Thanks.");
+    } else if (needModel.isSleeping) {
+      updatePetStatus("I'm sleeping");
     } else {
       updatePetStatus("I feel loved, thank you!");
       player.play(AssetSource('audio/attentionSound.wav'));
@@ -88,10 +96,19 @@ class _PetScreenState extends State<PetScreen> {
                     needStream: needModel.attentionStream,
                   ),
                 ),
+                Expanded(
+                  child: CustomContainer(
+                    icon: Icons.bedtime,
+                    needStream: needModel.sleepStream,
+                  ),
+                ),
               ],
             ),
           ),
           const SizedBox(height: 20),
+
+          // Pet Moving
+          movingPet,
 
           // Pet Status
           Text(petStatus, style: const TextStyle(fontSize: 20)),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import '../models/pet_model.dart';
 import '../widgets/other_button.dart';
 
@@ -52,7 +53,7 @@ class _InformationScreenState extends State<InformationScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => Padding(
@@ -72,6 +73,16 @@ class _InformationScreenState extends State<InformationScreen> {
         ),
       ),
     );
+  }
+
+  // Open YouTube Video
+  void _launchYouTubeVideo() async {
+    final Uri url = Uri.parse('https://www.youtube.com/watch?v=VUUL5HLW4Lg');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      _showPopup("Error", "Could not launch video.");
+    }
   }
 
   @override
@@ -96,8 +107,12 @@ class _InformationScreenState extends State<InformationScreen> {
             onPressed: () => _showPopup("How to Play", "Feed your pet, bathe it, and give it attention."),
           ),
           OtherButton(
-            text: "Animal facts",
+            text: "Animal Facts",
             onPressed: _fetchPetFact,
+          ),
+          OtherButton(
+            text: "Tamagotchi Video",
+            onPressed: _launchYouTubeVideo,
           ),
         ],
       ),

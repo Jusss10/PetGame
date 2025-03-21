@@ -9,20 +9,20 @@ class MovingPet extends StatefulWidget {
 }
 
 class _MovingPetState extends State<MovingPet>{
-  double _position = 0; // X-axis position
-  bool _movingRight = true; // Direction control
+  double _position = 0;
+  bool _movingRight = true;
 
   @override
   void initState() {
     super.initState();
-    startMoving(); // Start movement when widget is created
+    startMoving();
   }
 
   void startMoving() {
-    Timer.periodic(const Duration(seconds: 2), (timer) {
+    Timer.periodic(const Duration(seconds: 15), (timer) {
       setState(() {
-        _position = _movingRight ? 200 : 0; // Move left or right
-        _movingRight = !_movingRight; // Toggle direction
+        _position = _movingRight ? 200 : 0;
+        _movingRight = !_movingRight;
       });
     });
   }
@@ -35,10 +35,10 @@ class _MovingPetState extends State<MovingPet>{
       child: Stack(
         children: [
           AnimatedPositioned(
-            duration: const Duration(seconds: 1),
+            duration: const Duration(seconds: 15),
             left: _position,
             bottom: 50,
-            child: Image.asset('assets/rightPet.png', width: 100),
+            child: Image.asset('assets/images/rightPet.png', width: 100),
           ),
         ],
       ),
