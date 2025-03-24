@@ -11,10 +11,12 @@ class CustomContainer extends StatelessWidget {
     return StreamBuilder<int>(
       stream: needStream,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+        // Error handling
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.red));
         }
 
+        // Default waarde als er geen data is (bijv. tijdens wachten)
         int needLevel = snapshot.data ?? 10;
 
         return Column(
@@ -22,46 +24,24 @@ class CustomContainer extends StatelessWidget {
             Icon(icon, color: Colors.green, size: 30),
             const SizedBox(height: 5),
 
-            Container(//progress bar
+            // Progress Bar
+            Container(
               width: 50,
               height: 10,
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(5),
               ),
-
-              child: Container(// progressbar itself
-                width: 50,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300], // empty bar
-                  borderRadius: BorderRadius.circular(5),
+              child: FractionallySizedBox(
+                widthFactor: needLevel.clamp(0, 10) / 10, // Zorgt ervoor dat de waarde tussen 0-10 blijft
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                 ),
-
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 10,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-
-                    FractionallySizedBox(//filling of bar
-                      widthFactor: needLevel / 10,
-                      child: Container(
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
+              ),
             ),
           ],
         );

@@ -1,16 +1,25 @@
 import 'dart:async';
-
 import 'package:pet_game/models/speed_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NeedModel {
+  // Singleton instance
+  static final NeedModel _instance = NeedModel._internal();
+
+  factory NeedModel() {
+    return _instance;
+  }
+
+  NeedModel._internal(); // Private constructor
+
   int hungerLevel = 10;
   int dirtyLevel = 10;
   int attentionLevel = 10;
   int sleepLevel = 10;
 
-  late SharedPreferences prefs;
+  SharedPreferencesWithCache? prefs;
   bool isSleeping = false;
+  List<Timer> _activeTimers = [];
 
   final StreamController<int> _hungerController = StreamController<int>.broadcast();
   final StreamController<int> _dirtyController = StreamController<int>.broadcast();
@@ -24,36 +33,49 @@ class NeedModel {
 
   int interval = SpeedSettings.currentInterval;
 
-  void initNeeds() {
+  Future<void> initPrefs() async {
+    prefs = await SharedPreferencesWithCache.create(
+      cacheOptions: const SharedPreferencesWithCacheOptions(
+        allowList: <String>{'hungerLevel', 'dirtyLevel', 'attentionLevel', 'sleepLevel'},
+      ),
+    );
+  }
+
+  Future<void> loadNeeds() async {
+    if (prefs == null) {
+      await initPrefs();
+    }
+    hungerLevel = prefs?.getInt('hungerLevel') ?? 10;
+    dirtyLevel = prefs?.getInt('dirtyLevel') ?? 10;
+    attentionLevel = prefs?.getInt('attentionLevel') ?? 10;
+    sleepLevel = prefs?.getInt('sleepLevel') ?? 10;
+
+    _updateStreams();
+  }
+
+  Future<void> saveNeeds() async {
+    if (prefs == null) {
+      await initPrefs();
+    }
+    await prefs?.setInt('hungerLevel', hungerLevel);
+    await prefs?.setInt('dirtyLevel', dirtyLevel);
+    await prefs?.setInt('attentionLevel', attentionLevel);
+    await prefs?.setInt('sleepLevel', sleepLevel);
+  }
+
+  Future<void> initNeeds() async {
+    await initPrefs();
+    _updateStreams();
+    _startNeedDepletion();
+  }
+
+  void _updateStreams() {
     _hungerController.add(hungerLevel);
     _dirtyController.add(dirtyLevel);
     _attentionController.add(attentionLevel);
     _sleepController.add(sleepLevel);
-
-    _startNeedDepletion();
   }
 
-  Future<void> loadNeeds() async {
-    prefs = await SharedPreferences.getInstance();
-    hungerLevel = prefs.getInt('hungerLevel') ?? 10;
-    dirtyLevel = prefs.getInt('dirtyLevel') ?? 10;
-    attentionLevel = prefs.getInt('attentionLevel') ?? 10;
-    sleepLevel = prefs.getInt('sleepLevel') ?? 10;
-
-    _hungerController.sink.add(hungerLevel);
-    _dirtyController.sink.add(dirtyLevel);
-    _attentionController.sink.add(attentionLevel);
-    _sleepController.sink.add(sleepLevel);
-  }
-
-  Future<void> saveNeeds() async {
-    await prefs.setInt('hungerLevel', hungerLevel);
-    await prefs.setInt('dirtyLevel', dirtyLevel);
-    await prefs.setInt('attentionLevel', attentionLevel);
-    await prefs.setInt('sleepLevel', sleepLevel);
-  }
-
-  /// Starts decreasing needs over time
   void _startNeedDepletion() {
     _decreaseHunger();
     _decreaseDirty();
@@ -62,30 +84,36 @@ class NeedModel {
   }
 
   void _decreaseHunger() {
-    Timer.periodic(Duration(seconds: 1 + interval), (timer) {
+    var timer = Timer.periodic(Duration(seconds: 1 + interval), (timer) {
       if (!isSleeping && hungerLevel > 0) {
-        hungerLevel -= (1).toInt().clamp(0, 10);
+        hungerLevel = (hungerLevel - 1).clamp(0, 10);
         _hungerController.add(hungerLevel);
+        saveNeeds();
       }
     });
+    _activeTimers.add(timer);
   }
 
   void _decreaseDirty() {
-    Timer.periodic(Duration(seconds: 2 + interval), (timer) {
+    var timer = Timer.periodic(Duration(seconds: 2 + interval), (timer) {
       if (!isSleeping && dirtyLevel > 0) {
-        dirtyLevel -= (1).toInt().clamp(0, 10);
+        dirtyLevel = (dirtyLevel - 1).clamp(0, 10);
         _dirtyController.add(dirtyLevel);
+        saveNeeds();
       }
     });
+    _activeTimers.add(timer);
   }
 
   void _decreaseAttention() {
-    Timer.periodic(Duration(seconds: 3 + interval), (timer) {
+    var timer = Timer.periodic(Duration(seconds: 3 + interval), (timer) {
       if (!isSleeping && attentionLevel > 0) {
-        attentionLevel -= (1).toInt().clamp(0, 10);
+        attentionLevel = (attentionLevel - 1).clamp(0, 10);
         _attentionController.add(attentionLevel);
+        saveNeeds();
       }
     });
+    _activeTimers.add(timer);
   }
 
   void _decreaseSleep() {
@@ -93,6 +121,7 @@ class NeedModel {
       if (!isSleeping && sleepLevel > 0) {
         sleepLevel -= 1;
         _sleepController.add(sleepLevel);
+        saveNeeds();
 
         if (sleepLevel == 0) {
           isSleeping = true;
@@ -101,6 +130,7 @@ class NeedModel {
       if (isSleeping) {
         sleepLevel += 1;
         _sleepController.add(sleepLevel);
+        saveNeeds();
         if (sleepLevel >= 10) {
           isSleeping = false;
         }
@@ -111,32 +141,45 @@ class NeedModel {
   void updateHungerLevel(int newLevel) {
     hungerLevel = newLevel.clamp(0, 10);
     _hungerController.add(hungerLevel);
+    saveNeeds();
   }
 
   void updateDirtyLevel(int newLevel) {
     dirtyLevel = newLevel.clamp(0, 10);
     _dirtyController.add(dirtyLevel);
+    saveNeeds();
   }
 
   void updateAttentionLevel(int newLevel) {
     attentionLevel = newLevel.clamp(0, 10);
     _attentionController.add(attentionLevel);
+    saveNeeds();
   }
 
   void updateSleepLevel(int newLevel) {
     sleepLevel = newLevel.clamp(0, 10);
     _sleepController.add(sleepLevel);
+    saveNeeds();
   }
 
   void updateSpeedInterval() {
     interval = SpeedSettings.currentInterval;
+    print("🚀 Speed setting updated to: ${SpeedSettings.selectedSpeed}");
+    print("⏳ New interval: $interval seconds");
+
     _restartNeedDepletion();
   }
 
+  void _stopAllTimers() {
+    for (var timer in _activeTimers) {
+      timer.cancel();
+    }
+    _activeTimers.clear();
+  }
+
   void _restartNeedDepletion() {
-    _decreaseHunger();
-    _decreaseDirty();
-    _decreaseAttention();
-    _decreaseSleep();
+    _stopAllTimers();
+    _startNeedDepletion();
   }
 }
+

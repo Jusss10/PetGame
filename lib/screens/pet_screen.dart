@@ -14,14 +14,19 @@ class PetScreen extends StatefulWidget {
 
 class _PetScreenState extends State<PetScreen> {
   String petStatus = " ";
-  final NeedModel needModel = NeedModel();
   late AudioPlayer player;
 
   @override
   void initState() {
     super.initState();
-    needModel.initNeeds();
     player = AudioPlayer();
+    _initializeNeeds();
+  }
+
+  Future<void> _initializeNeeds() async {
+    await NeedModel().loadNeeds();
+    setState(() {}); // Update the UI after loading
+    NeedModel().initNeeds(); // Start only after loading data
   }
 
   void updatePetStatus(String newStatus) {
@@ -31,38 +36,38 @@ class _PetScreenState extends State<PetScreen> {
   }
 
   void feedPet() {
-    if (needModel.hungerLevel == 10) {
+    if (NeedModel().hungerLevel == 10) {
       updatePetStatus("I'm full, please stop feeding me.");
-    } else if (needModel.isSleeping) {
+    } else if (NeedModel().isSleeping) {
       updatePetStatus("I'm sleeping");
     } else {
       updatePetStatus("Mmmhhh delicious!");
       player.play(AssetSource('audio/foodSound.wav'));
-      needModel.updateHungerLevel(needModel.hungerLevel + 2);
+      NeedModel().updateHungerLevel(NeedModel().hungerLevel + 2);
     }
   }
 
   void bathPet() {
-    if (needModel.dirtyLevel == 10) {
+    if (NeedModel().dirtyLevel == 10) {
       updatePetStatus("I'm not stinking anymore, so stop.");
-    } else if (needModel.isSleeping) {
+    } else if (NeedModel().isSleeping) {
       updatePetStatus("I'm sleeping");
     } else {
       updatePetStatus("Now I'm clean!!");
       player.play(AssetSource('audio/bathSound.wav'));
-      needModel.updateDirtyLevel(needModel.dirtyLevel + 2);
+      NeedModel().updateDirtyLevel(NeedModel().dirtyLevel + 2);
     }
   }
 
   void cuddlePet() {
-    if (needModel.attentionLevel == 10) {
+    if (NeedModel().attentionLevel == 10) {
       updatePetStatus("Can I please get some alone time? Thanks.");
-    } else if (needModel.isSleeping) {
+    } else if (NeedModel().isSleeping) {
       updatePetStatus("I'm sleeping");
     } else {
       updatePetStatus("I feel loved, thank you!");
       player.play(AssetSource('audio/attentionSound.wav'));
-      needModel.updateAttentionLevel(needModel.attentionLevel + 2);
+      NeedModel().updateAttentionLevel(NeedModel().attentionLevel + 2);
     }
   }
 
@@ -80,25 +85,25 @@ class _PetScreenState extends State<PetScreen> {
                 Expanded(
                   child: CustomContainer(
                     icon: Icons.fastfood,
-                    needStream: needModel.hungerStream,
+                    needStream: NeedModel().hungerStream,
                   ),
                 ),
                 Expanded(
                   child: CustomContainer(
                     icon: Icons.bathtub,
-                    needStream: needModel.dirtyStream,
+                    needStream: NeedModel().dirtyStream,
                   ),
                 ),
                 Expanded(
                   child: CustomContainer(
                     icon: Icons.favorite,
-                    needStream: needModel.attentionStream,
+                    needStream: NeedModel().attentionStream,
                   ),
                 ),
                 Expanded(
                   child: CustomContainer(
                     icon: Icons.bedtime,
-                    needStream: needModel.sleepStream,
+                    needStream: NeedModel().sleepStream,
                   ),
                 ),
               ],
@@ -107,7 +112,7 @@ class _PetScreenState extends State<PetScreen> {
           const SizedBox(height: 20),
 
           // Pet Moving
-          MovingPet(needModel: needModel),
+          const MovingPet(), // Removed the needModel parameter
 
           // Pet Status
           Text(petStatus, style: const TextStyle(fontSize: 20)),

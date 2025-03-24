@@ -4,8 +4,7 @@ import 'dart:async';
 import '../models/need_model.dart';
 
 class MovingPet extends StatefulWidget {
-  final NeedModel needModel;
-  const MovingPet({super.key, required this.needModel});
+  const MovingPet({super.key});
 
   @override
   State<MovingPet> createState() => _MovingPetState();
@@ -23,7 +22,7 @@ class _MovingPetState extends State<MovingPet> {
 
   void startMoving() {
     Timer.periodic(const Duration(seconds: 15), (timer) {
-      if (!widget.needModel.isSleeping) {
+      if (!NeedModel().isSleeping) { // Use singleton here
         setState(() {
           _position = _movingRight ? 200 : 0;
           _movingRight = !_movingRight;
@@ -34,7 +33,7 @@ class _MovingPetState extends State<MovingPet> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.needModel.isSleeping
+    return NeedModel().isSleeping // Use singleton here
         ? Positioned.fill(
       child: Image.asset(
         'assets/images/sleep.png',
